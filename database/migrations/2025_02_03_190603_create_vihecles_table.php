@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('driver_id')->constrained('drivers')->references('driver_id')->onDelete('cascade');
             $table->string('license_plate');
             $table->enum('type', ['car', 'bike', 'cycle', 'taxi'])->default('car');
-            $table->int('fuel');
+            $table->integer('fuel');
             $table->string('color');
             $table->float('model');
-            $table->int('manifactur_year');
+            $table->integer('manifactur_year');
             $table->string('manifactur_company');
             $table->timestamps();
         });

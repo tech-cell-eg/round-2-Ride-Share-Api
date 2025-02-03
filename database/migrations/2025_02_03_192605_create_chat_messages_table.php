@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('chat_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ride_id')->constrained('chats');
+            $table->foreignId('ride_id')->constrained('rides')->references('id')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('customers')->references('customer_id');
             $table->foreignId('driver_id')->constrained('drivers')->references('driver_id');
             $table->text('message');
