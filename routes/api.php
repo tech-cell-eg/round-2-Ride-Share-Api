@@ -17,12 +17,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
     // Notification
-    Route::controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
-        Route::post('notification-token', 'updateNotificationToken')->name('notification-token');
-        Route::get('/mark-all-as-read', 'markAllAsRead')->name('mark-all-as-read');
-        Route::get('/mark-as-read/{id}', 'markAsRead')->name('mark-as-read');
-        Route::post('deleteAll', 'deleteAll')->name('deleteAll');
-        Route::post('delete/{id}', 'delete')->name('delete');
+    Route::prefix('notifications')->controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
+        Route::post('token', 'updateNotificationToken')->name('notification-token');
+        Route::get('', 'allNotifications')->name('notifications');
+        Route::get('unread', 'unreadNotifications')->name('unread-notifications');
+        Route::get('read', 'readNotifications')->name('read-notifications');
+        Route::get('mark-all-as-read', 'markAllAsRead')->name('mark-all-as-read');
+        Route::get('mark-as-read/{id}', 'markAsRead')->name('mark-as-read');
+        Route::delete('deleteAll', 'deleteAll')->name('deleteAll');
+        Route::delete('delete/{id}', 'deleteNotificaton')->name('delete');
     });
 
 

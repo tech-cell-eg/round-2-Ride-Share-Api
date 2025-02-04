@@ -15,6 +15,8 @@ class PaymentSuccessful extends Notification
     use Queueable;
 
     protected $amount;
+    protected $title;
+    protected $body;
 
     /**
      * Create a new notification instance.
@@ -22,6 +24,8 @@ class PaymentSuccessful extends Notification
     public function __construct(float $amount)
     {
         $this->amount = $amount;
+        $this->title = 'Payment Successful';
+        $this->body = 'Your payment of '. $this->amount.' was successful';
     }
 
     /**
@@ -37,9 +41,8 @@ class PaymentSuccessful extends Notification
     public function toFcm($notifiable): FcmMessage
     {
         return (new FcmMessage(notification: new FcmNotification(
-            title: 'Account Activated',
-            body : 'Your payment of '. $this->amount.' was successful',
-//            image: 'http://example.com/url-to-image-here.png'
+            title: $this->title,
+            body : $this->body,
         )));
     }
 
@@ -62,7 +65,8 @@ class PaymentSuccessful extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'data' =>'Your payment of '. $this->amount.' was successful'
+            'title' => $this->title,
+            'body'  => $this->body
         ];
     }
 }

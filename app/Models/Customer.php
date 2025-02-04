@@ -13,7 +13,7 @@ class Customer extends Model
     ];
 
     public function users() :BelongsTo{
-        return $this->belongsTo('App\Models\User', 'customer_id', 'id');
+        return $this->belongsTo('App\Models\User', 'customer_id', 'id') ;
     }
 
 }
