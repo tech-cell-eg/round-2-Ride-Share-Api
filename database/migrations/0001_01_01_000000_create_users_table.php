@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('fcm_token')->nullable();
             $table->enum('gender', ['male', 'female']);
             $table->enum('roles', ['admin', 'customer', 'driver']);
-            $table->string('mobile_number');
+            $table->string('mobile_number')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
