@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('delete/{id}', 'deleteNotificaton')->name('delete');
     });
 
-
+    // Location
+    Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
 
 });
