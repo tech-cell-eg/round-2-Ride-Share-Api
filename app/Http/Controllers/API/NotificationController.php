@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\NotificationResource;
 use App\Models\User;
 use App\Notifications\PaymentSuccessful;
 use Illuminate\Http\Request;
@@ -126,7 +127,7 @@ class NotificationController extends Controller
                     ->get();
             return response()->json([
                 'success' => true,
-                'data'    => $notifications
+                'data'    => NotificationResource::collection($notifications)
             ]);
         } catch (\Exception $exception) {
             return response()->json([
@@ -142,7 +143,7 @@ class NotificationController extends Controller
                 ->get();
             return response()->json([
                 'success' => true,
-                'data'    => $notifications
+                'data'    => NotificationResource::collection($notifications)
             ]);
         } catch (\Exception $exception) {
             return response()->json([
@@ -158,7 +159,7 @@ class NotificationController extends Controller
                 ->get();
             return response()->json([
                 'success' => true,
-                'data'    => $notifications
+                'data'    => NotificationResource::collection($notifications)
             ]);
         } catch (\Exception $exception) {
             return response()->json([
