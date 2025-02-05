@@ -5,63 +5,44 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
 use App\Models\User;
-use App\Notifications\PaymentSuccessful;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
 class NotificationController extends Controller
 {
-    public function updateNotificationToken(Request $request) {
+    use ApiResponse;
+    public function update(Request $request) {
         try {
-            $user = \Illuminate\Support\Facades\Auth::user();
+            $user = Auth::user();
             $user->fcm_token = $request->token;
             $user->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Token saved successfully',
-            ]);
+            return $this->successResponse([], 'Token saved successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
+            return $this->errorResponse($e->getMessage());
         }
     }
 
-    public function makeNotifications(User $user = null, Notification $notificationInstance = null)
+    public function store(User $user = null, Notification $notificationInstance = null)
     {
         try {
             if ($user->fcm_token == null) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "User doesn't have FCM Token",
-                ]);
+                return $this->errorResponse("User doesn't have FCM Token");
             }
             $user->notify($notificationInstance);
-            return response()->json([
-                'success' => true,
-                'message' => 'Notification sent successfully',
-            ]);
+            return $this->successResponse([], 'Notification send successfully');
         } catch (\Throwable $th) {
-            return response()->json([
-                'error' => $th->getMessage(),
-            ], 500);
+            return $this->errorResponse($th->getMessage());
         }
     }
 
     public function markAllAsRead() {
         try {
             Auth::user()->unreadNotifications->markAsRead();
-            return response()->json([
-                'success' => true,
-                'message' => 'Notifications marked as read successfully',
-            ]);
+            return $this->successResponse([], 'Notifications marked as read successfully');
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ],403);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
@@ -71,68 +52,42 @@ class NotificationController extends Controller
             if ($notification) {
                 $notification->markAsRead();
             }
-            return response()->json([
-                'success' => true,
-                'message' => 'Notification marked as read successfully',
-            ]);
+            return $this->successResponse([], 'Notification marked as read successfully');
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ],403);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
     public function deleteAll() {
         try {
             Auth::user()->readNotifications()->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Notifications deleted successfully',
-            ]);
+            return $this->successResponse([], 'Notifications deleted successfully');
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ],403);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
-    public  function deleteNotificaton(string $id) {
+    public  function delete(string $id) {
         try {
             $notification = Auth::user()->notifications()->find($id);
-
             if (!$notification) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Notification not found',
-                ], 404);
+                return $this->errorResponse("Notification not found", 404);
             }
-
             $notification->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Notification deleted successfully',
-            ]);
+            return $this->successResponse([], 'Notification deleted successfully');
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ],403);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
-    public function allNotifications() {
+    public function index() {
         try {
-                $notifications = Auth::user()->notifications()
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            return response()->json([
-                'success' => true,
-                'data'    => NotificationResource::collection($notifications)
-            ]);
+            $notifications = Auth::user()->notifications()
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return $this->successResponse(NotificationResource::collection($notifications));
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ]);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
@@ -141,14 +96,9 @@ class NotificationController extends Controller
             $notifications = Auth::user()->unreadNotifications()
                 ->orderBy('created_at', 'desc')
                 ->get();
-            return response()->json([
-                'success' => true,
-                'data'    => NotificationResource::collection($notifications)
-            ]);
+            return $this->successResponse(NotificationResource::collection($notifications));
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ]);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
@@ -157,14 +107,9 @@ class NotificationController extends Controller
             $notifications = Auth::user()->readNotifications()
                 ->orderBy('created_at', 'desc')
                 ->get();
-            return response()->json([
-                'success' => true,
-                'data'    => NotificationResource::collection($notifications)
-            ]);
+            return $this->successResponse(NotificationResource::collection($notifications));
         } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ]);
+            return $this->errorResponse($exception->getMessage());
         }
     }
 
