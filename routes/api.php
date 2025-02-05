@@ -31,4 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Location
     Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
 
+    // Transports
+    Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
+
 });
