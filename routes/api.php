@@ -38,5 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/car/{vehicle}', [VehicleController::class, 'showCar'])->name('car');
 
     //Rent request
+    Route::post('ride-request', [\App\Http\Controllers\API\RideController::class, 'store'])->name('ride-request');
 
 });

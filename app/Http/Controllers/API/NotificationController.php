@@ -24,12 +24,9 @@ class NotificationController extends Controller
         }
     }
 
-    public function store(User $user = null, Notification $notificationInstance = null)
+    public function store(User $user = null, $notificationInstance = null)
     {
         try {
-            if ($user->fcm_token == null) {
-                return $this->errorResponse("User doesn't have FCM Token");
-            }
             $user->notify($notificationInstance);
             return $this->successResponse([], 'Notification send successfully');
         } catch (\Throwable $th) {
