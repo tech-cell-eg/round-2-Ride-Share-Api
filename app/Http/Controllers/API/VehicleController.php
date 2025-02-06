@@ -28,4 +28,13 @@ class VehicleController extends Controller
         }
     }
 
+    public function ShowCar(Vehicle $vehicle) {
+        try {
+            return $this->successResponse((new CarResource($vehicle))->toArray(request()), 'Car found');
+        } catch (\Exception $exception) {
+            return $this->errorResponse($exception->getMessage(), 500);
+        }
+    }
+
+
 }

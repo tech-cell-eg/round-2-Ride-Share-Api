@@ -35,5 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Transports
     Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
     Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
+    Route::get('/car/{vehicle}', [VehicleController::class, 'showCar'])->name('car');
 
 });
