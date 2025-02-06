@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('vihecles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('driver_id')->constrained('drivers')->references('driver_id')->onDelete('cascade');
+            $table->foreignId('transport_id')->constrained('transports')->onDelete('cascade');
             $table->string('license_plate');
-            $table->enum('type', ['car', 'bike', 'cycle', 'taxi'])->default('car');
             $table->integer('fuel');
             $table->string('color');
             $table->float('model');

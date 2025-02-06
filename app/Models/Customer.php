@@ -13,4 +13,5 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class, 'customer_id'); // Assuming 'customer_id' is the foreign key in the customers table
     }
+
 }
