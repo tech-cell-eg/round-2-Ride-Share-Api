@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,5 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Transports
     Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
+    Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
 
 });

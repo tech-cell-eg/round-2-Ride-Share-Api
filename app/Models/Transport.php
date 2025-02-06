@@ -15,7 +15,7 @@ class Transport extends Model
     ];
 
     public function vehicles():hasMany {
-        return $this->hasMany(Vehicles::class);
+        return $this->hasMany(Vehicle::class);
     }
 
 }
