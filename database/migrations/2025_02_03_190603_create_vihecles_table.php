@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('vihecles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('driver_id')->constrained('drivers')->references('driver_id')->onDelete('cascade');
+            $table->foreignId('driver_id')->constrained('drivers', 'driver_id')->onDelete('cascade');
             $table->foreignId('transport_id')->constrained('transports')->onDelete('cascade');
             $table->string('license_plate');
             $table->integer('fuel');
