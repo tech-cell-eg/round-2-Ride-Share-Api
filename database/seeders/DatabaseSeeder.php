@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($users as $user) {
             Customer::factory()->create([
-                'customer_id' => $user->id, // تعيين المستخدم الفريد لكل عميل
+                'customer_id' => $user->id, 
             ]);
         }
     
