@@ -58,4 +58,14 @@ class UserController extends Controller
             'street' => $customer->street
             ], 'Profile updated successfully!');
     }
+
+
+    public function logout(Request $request){
+
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ], 200);
+    }
 }
