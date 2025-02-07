@@ -34,6 +34,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function customer()
+{
+    return $this->hasOne(Customer::class, 'customer_id');
+}
+
     /**
      * Get the attributes that should be cast.
      *

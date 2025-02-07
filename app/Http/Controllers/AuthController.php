@@ -25,6 +25,7 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->first();
+        $customer = $user->customer;
 
         if (!$user || !Auth::attempt($request->only('email', 'password'))) {
             return $this->errorResponse('Unauthorized', 401);
@@ -37,6 +38,10 @@ class AuthController extends Controller
             'token' => $token,
             'name' => $user->name,
             'email' => $user->email,
+            'mobile_number' => $user->mobile_number,
+            'city' => $customer->city,
+            'district' => $customer->district,
+            'street' => $customer->street,
         ], 'Login successful');
     }
     
