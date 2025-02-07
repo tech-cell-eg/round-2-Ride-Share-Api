@@ -23,7 +23,7 @@ class UserController extends Controller
         ]);
 
 
-        $user = User::findOrFail($request->id); 
+        $user = auth()->user();
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
