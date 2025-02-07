@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::put('profile/update' , [UserController::class ,'update']);
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('logout', [UserController::class, 'logout']);
 });
 
 Route::post('login', [AuthController::class, 'login']);
