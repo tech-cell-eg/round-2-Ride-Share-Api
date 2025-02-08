@@ -21,28 +21,21 @@ class RideController extends Controller
 
     public function store(RideRequest $request) {
         try {
-            $data = $request->validated();
-            $vehicle = Vehicle::findOrFail($data['vehicle_id']);
-            $user = User::findOrFail($vehicle->driver_id);
-            $ride = Ride::create([
-                'customer_id' => $user->id,
-                'vehicle_id' => $data['vehicle_id'],
-                'driver_id' => $user->id,
-                'status' => 'requested',
-                'pickup_location' => $data['pickup_location'],
-                'drop_location' => $data['drop_location'],
-                'fare_price' => $data['fare_price'],
-                'distance' => $data['distance'],
-            ]);
+            $dataValidated = $request->validated();
+            $vehicle = Vehicle::findOrFail($dataValidated['vehicle_id']);
+            $dataValidated['customer_id'] = Auth::id();
+            $dataValidated['driver_id'] = $vehicle->driver_id;
+            $dataValidated['status'] = 'requested';
+            $ride = Ride::create($dataValidated);
             // send notifications for driver
             $rideData = [];
-            $rideData['customer_name'] = $user->name;
-            $rideData['pickup_location'] = $data['pickup_location'];
-            $rideData['drop_location'] = $data['drop_location'];
-            $rideData['fare_price'] = $data['fare_price'];
-            $rideData['distance'] = $data['distance'];
+            $rideData['customer_name'] = Auth::user()->name;
+            $rideData['pickup_location'] = $dataValidated['pickup_location'];
+            $rideData['drop_location'] = $dataValidated['drop_location'];
+            $rideData['fare_price'] = $dataValidated['fare_price'];
+            $rideData['distance'] = $dataValidated['distance'];
             $note = new NotificationController();
-            $note->store($user, new \App\Notifications\RideRequest($rideData));
+            $note->store(User::findOrFail($vehicle->driver_id), new \App\Notifications\RideRequest($rideData));
             return $this->successResponse((new RideResource($ride))->toArray(request()), 'Ride created successfully.');
         } catch (\Exception $exception) {
             return $this->errorResponse($exception->getMessage(), 500);
