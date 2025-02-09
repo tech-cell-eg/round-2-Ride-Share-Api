@@ -1,7 +1,6 @@
 <?php
 
-
-
+use App\Http\Controllers\API\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,14 +9,13 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 // Auth
-Route::post('login', [AuthController::class, 'login']);
-
+Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
+Route::post('login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
 
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
-       Route::put('profile/update' , [UserController::class ,'update']);
-       Route::post('logout', [UserController::class, 'logout']);
+    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
     // Notification
     Route::prefix('notifications')->controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
@@ -33,5 +31,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Location
     Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
-});
 
+    // Transports
+    Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
+    Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
+    Route::get('/car/{vehicle}', [VehicleController::class, 'showCar'])->name('car');
+
+    //Rent request
+    Route::post('ride-request', [\App\Http\Controllers\API\RideController::class, 'store'])->name('ride-request');
+
+});

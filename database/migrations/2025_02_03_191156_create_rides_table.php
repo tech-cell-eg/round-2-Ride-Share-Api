@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('driver_id')->constrained('drivers')->references('driver_id')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('customers')->references('customer_id')->onDelete('cascade');
+            $table->foreignId('vehicle_id')->constrained('vehicles')->references('id')->nullable();
             $table->string('pickup_location');
             $table->string('drop_location');
             $table->float('fare_price');
