@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,18 +11,7 @@ class UserController extends Controller
 {
 
     use ApiResponseTrait;
-    public function update(Request $request){
-
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'mobile_number' => 'required|string',
-            'street' => 'required|string',
-            'district' => 'required|string',
-            'city' => 'required|string',
-        ]);
-
+    public function update(UpdateUserRequest $request){
 
         $user = auth()->user();
         $user->update([
