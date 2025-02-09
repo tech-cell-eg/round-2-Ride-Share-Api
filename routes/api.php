@@ -31,4 +31,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Location
     Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
+
+    // Payment
+    Route::post('/payment/process', [\App\Http\Controllers\API\PaymentController::class, 'sendPayment']);
+
+
 });
+
+// Payment
+Route::get('/payment/callback', [\App\Http\Controllers\API\PaymentController::class, 'callBack']);
