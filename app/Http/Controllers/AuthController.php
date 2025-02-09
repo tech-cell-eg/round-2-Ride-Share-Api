@@ -2,15 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\Driver;
 use App\Models\User;
+use App\Http\Requests\LoginRequest;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 
 class AuthController extends Controller
 {
+
+    use ApiResponseTrait;
+    
+    public function login(LoginRequest $request){
+
+
+ 
+        $user = User::where('email', $request->email)->first();
+        $customer = $user->customer;
+
+        if (!$user || !Auth::attempt($request->only('email', 'password'))) {
+            return $this->errorResponse('Unauthorized', 401);
+        }
+
+        // Generate Sanctum token
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        return $this->successResponse([
+            'token' => $token,
+            'name' => $user->name,
+            'email' => $user->email,
+            'mobile_number' => $user->mobile_number,
+            'city' => $customer->city,
+            'district' => $customer->district,
+            'street' => $customer->street,
+        ], 'Login successful');
+    }
+  
     public function register (Request $request) {
 
 //        dd($request->all());
@@ -73,56 +101,6 @@ class AuthController extends Controller
         }
 
     }
-
-    public function login (Request $request) {
-
-        $validated = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required|string|min:8'
-        ]);
-
-        if ($validated->fails()) {
-            return response()->json($validated->errors(), 403);
-        }
-
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password
-        ];
-
-        try {
-            if (!auth()->attempt($credentials)) {
-                return response()->json([
-                    'error' => 'Invalid Credentials'
-                ],403);
-            }
-            $user = User::where('email', $credentials['email'])->firstOrFail();
-            $token = $user->createToken('auth_token')->plainTextToken;
-            return response()->json([
-                'access_token' => $token,
-                'user' => $user
-            ], 200);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ],403);
-        }
-
-    }
-
-    public function logout(Request $request)
-    {
-        try {
-            $request->user()->currentAccessToken()->delete();
-            return response()->json([
-                'message' => 'User has been logged out'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to log out',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+    
 
 }

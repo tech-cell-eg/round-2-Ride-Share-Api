@@ -1,6 +1,7 @@
 <?php
 
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,13 +10,14 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 // Auth
-Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
-Route::post('login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
-    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+       Route::put('profile/update' , [UserController::class ,'update']);
+       Route::post('logout', [UserController::class, 'logout']);
 
     // Notification
     Route::prefix('notifications')->controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
@@ -32,3 +34,4 @@ Route::middleware('auth:sanctum')->group(function () {
     // Location
     Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
 });
+

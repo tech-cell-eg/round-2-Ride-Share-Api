@@ -11,7 +11,8 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+
+    use HasFactory, Notifiable ,HasApiTokens;
 
 
     /**
@@ -37,6 +38,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function customer()
+{
+    return $this->hasOne(Customer::class, 'customer_id');
+}
 
     /**
      * Get the attributes that should be cast.
