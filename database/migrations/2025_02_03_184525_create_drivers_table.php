@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('driver_id')->constrained('users')->references('id')->cascadeOnDelete()->unique();
             $table->string('license_number')->unique();
             $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->tinyInteger('average_rating');
+            $table->tinyInteger('average_rating')->default(0);
             $table->timestamps();
         });
     }
