@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\API;
 
 
-use Approllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -12,31 +13,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Controller
+class AuthController extends \App\Http\Controllers\Controller
 {
 
     use ApiResponse;
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required','string','max:255'],
-            'email' => ['required','email','unique:users'],
-            'gender' => ['required','string'],
-            'mobile_number' => ['required','unique:users'],
-            'password' => 'required',
-            'confirm_password' => 'required|same:password',
-        ]);
-        if ($validator->fails()) {
-            return ApiResponse::sendResponse(Response::HTTP_UNPROCESSABLE_ENTITY, 'Registeration validation error', $validator->errors());
-        }
+        $data = $request->validated();
 
-        $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'gender' => $request->gender,
-                'mobile_number' => $request->mobile_number,
-                'password' => Hash::make($request->password),
-            ]);
+        $user = User::create($data);
 
         $data['token'] = $user->createToken('Ride Share')->plainTextToken;
         $data['name'] = $user->name;
@@ -46,22 +31,13 @@ class AuthController extends Controller
 
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => ['required','email'],
-            'password' => ['required'],
-        ]);
+        $data = $request->validated();
 
-        if ($validator->fails()) {
-            return $this->errorResponse($validator->errors(), 'Login validation error', Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (Auth::attempt($data)) {
             $user = Auth::user();
             $data['token'] = $user->createToken('API TOKEN')->plainTextToken;
-            $data['name'] = $user->name;
-            $data['email'] = $user->email;
 
             return $this->successResponse($data, 'User Loged in successfully', Response::HTTP_CREATED);
         }
