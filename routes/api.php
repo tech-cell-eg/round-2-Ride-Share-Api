@@ -43,4 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
+    // Offers
+    Route::prefix('offers')->controller(\App\Http\Controllers\API\OfferController::class)->group(function () {
+        Route::get('', 'index')->name('offers');
+    });
+
 });

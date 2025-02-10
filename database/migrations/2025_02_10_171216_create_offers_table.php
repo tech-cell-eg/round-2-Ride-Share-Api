@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('admin_id')->nullable()->constrained('admins')->references('admin_id')->onDelete('set null');
             $table->string('title');
             $table->text('description');
+            $table->boolean('is_available');
             $table->timestamps();
         });
     }
