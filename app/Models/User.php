@@ -61,4 +61,8 @@ class User extends Authenticatable
     public function customers(): HasMany {
         return $this->hasMany(Customer::class, 'customer_id');
     }
+
+    public function favourites(): HasMany {
+        return $this->hasMany(Favourit::class, 'user_id');
+    }
 }
