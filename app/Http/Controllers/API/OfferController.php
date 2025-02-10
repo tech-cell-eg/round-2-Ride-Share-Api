@@ -19,4 +19,8 @@ class OfferController extends Controller
         }
     }
 
+    public function getOffer($id) {
+
+    }
+
 }
