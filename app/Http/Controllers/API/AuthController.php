@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Helpers\ApiResponse;
-use App\Http\Controllers\Controller;
+
+use Approllers\Controller;
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    use ApiResponse;
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -40,7 +42,7 @@ class AuthController extends Controller
         $data['name'] = $user->name;
         $data['email'] = $user->email;
 
-        return ApiResponse::sendResponse(Response::HTTP_CREATED, 'User created successfully', $data);
+        return $this->successResponse($data, 'User created successfully', Response::HTTP_CREATED);
 
     }
 
@@ -52,7 +54,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::sendResponse(Response::HTTP_UNPROCESSABLE_ENTITY, 'Login validation error', $validator->errors());
+            return $this->errorResponse($validator->errors(), 'Login validation error', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
@@ -61,8 +63,8 @@ class AuthController extends Controller
             $data['name'] = $user->name;
             $data['email'] = $user->email;
 
-            return ApiResponse::sendResponse(Response::HTTP_CREATED, 'User Loged in successfully', $data);
+            return $this->successResponse($data, 'User Loged in successfully', Response::HTTP_CREATED);
         }
-        return ApiResponse::sendResponse(Response::HTTP_UNAUTHORIZED, ' these credentials do not match our records.', []);
+        return $this->errorResponse([], 'these credentials do not match our records.', Response::HTTP_UNAUTHORIZED);
     }
 }

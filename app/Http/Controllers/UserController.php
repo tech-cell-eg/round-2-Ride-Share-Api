@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Customer;
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 class UserController extends Controller
 {
 
-    use ApiResponseTrait;
+    use ApiResponse;
     public function update(UpdateUserRequest $request){
 
         $user = auth()->user();
@@ -22,7 +23,7 @@ class UserController extends Controller
 
         if ($user->roles == 'customer') {
 
-            $customer = Customer::where('customer_id', $user->id)->first();  
+            $customer = Customer::where('customer_id', $user->id)->first();
             if ($customer) {
                 $customer->update([
                     'street' => $request->street,

@@ -4,18 +4,14 @@ use App\Http\Controllers\API\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/user', function (Request $request) {
-//    return $request->user();
-//})->middleware('auth:sanctum');
 
 // Auth
-Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register');
-Route::post('login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
-
+Route::post('register', [\App\Http\Controllers\API\AuthController::class, 'register'])->name('register');
+Route::post('login', [\App\Http\Controllers\API\AuthController::class, 'login'])->name('login');
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
-    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [\App\Http\Controllers\UserController::class, 'logout'])->name('logout');
 
     // Notification
     Route::prefix('notifications')->controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
