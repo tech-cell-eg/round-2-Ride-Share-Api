@@ -39,4 +39,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Payment
-Route::get('/payment/callback', [\App\Http\Controllers\API\PaymentController::class, 'callBack']);
+Route::match(['GET', 'POST'], '/payment/callback', [\App\Http\Controllers\API\PaymentController::class, 'callBack']);

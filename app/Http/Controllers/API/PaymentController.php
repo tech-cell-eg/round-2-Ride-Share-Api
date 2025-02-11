@@ -10,6 +10,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
@@ -21,13 +22,13 @@ class PaymentController extends Controller
     protected $integrationsId;
 
     public function __construct() {
-        $this->baseUrl = env("PAYMOB_BASE_URL");
-        $this->apiKey = env("PAYMOB_API_KEY");
+        $this->baseUrl = env("STRIPE_BASE_URL");
+        $this->apiKey = env("STRIPE_SECRET_KEY");
         $this->headers = [
             'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'authorization' => 'Bearer ' . $this->apiKey,
         ];
-        $this->integrationsId = [4900709, 4900706];
     }
 
     protected function buildRequest ($method, $endPoint, $data = null, $type = 'json') {
@@ -41,24 +42,33 @@ class PaymentController extends Controller
         }
     }
 
-    protected function generateToken () {
-        $response = $this->buildRequest('POST', '/auth/tokens', [
-            'api_key' => $this->apiKey
-        ]);
-        return $response->getData(true)['data']['token'];
+    protected function formatData($request) {
+        $data = $request->validated();
+        return [
+            "success_url" => $request->getSchemeAndHttpHost() . '/api/payment/callback?session_id={CHECKOUT_SESSION_ID}',
+            "line_items" => [
+                [
+                    "price_data" => [
+                        "unit_amount" => $data["amount_cents"] * 100,
+                        "currency" => $data["currency"],
+                        "product_data" => [
+                            "name" => "ride success",
+                        ]
+                    ],
+                    "quantity" => 1,
+                ]
+            ],
+            "mode" => "payment",
+            "metadata" => [
+                "user_id" => Auth::id(),
+            ]
+        ];
     }
 
     public function sendPayment(PaymentProcessRequest $request) {
-        $this->headers['Authorization'] = 'Bearer ' . $this->generateToken();
-        $data = $request->validated();
-        $data['api_source'] = "INVOICE";
-        $data['integrations'] = $this->integrationsId;
-        $data['merchant_order_id'] = Auth::user()->id;
-        $response = $this->buildRequest('POST', '/ecommerce/orders', $data);
+        $data = $this->formatData($request);
+        $response = $this->buildRequest('POST', '/v1/checkout/sessions', $data, 'form_params');
         $responseData = $response->getData(true);
-        if (isset($responseData['data']['message']) && $responseData['data']['message'] === 'duplicate') {
-            return $this->errorResponse('Duplicate payment detected.');
-        }
         if ($responseData['success']) {
             return $this->successResponse([
                 'url' => $responseData['data']['url']
@@ -69,29 +79,18 @@ class PaymentController extends Controller
 
     public function callback(Request $request) {
         try {
-            $response = $request->all();
 
-            if (isset($response['success']) && $response['success'] === 'true') {
-                if (!isset($response['merchant_order_id'], $response['amount_cents'])) {
-                    return $this->errorResponse('Invalid response from Paymob callback.');
-                }
-
-                $userId = $response['merchant_order_id'];
-
-                if (!$userId || !User::find($userId)) {
-                    return $this->errorResponse('Invalid user or merchant order ID.');
-                }
-
-                $user = User::findOrFail($userId);
-
-                $note = new NotificationController();
-                $note->store($user, new \App\Notifications\PaymentSuccessful($response['amount_cents']));
-
+            $sessionId = $request->get("session_id");
+            $response = $this->buildRequest('POST', '/v1/checkout/sessions/' . $sessionId);
+            $responseData = $response->getData(true);
+            $user = User::findOrFail($responseData['data']['metadata']['user_id']);
+            $note = new NotificationController();
+            $note->store( $user, new \App\Notifications\PaymentSuccessful($responseData['data']['amount_total']) );
+            if($responseData['success']&& $responseData['data']['payment_status']==='paid') {
                 return redirect()->route('payment.success');
             }
-
-            return redirect()->route('payment.cancel');
-        } catch (\Exception $exception) {
+            return redirect()->route('payment.failed');
+            } catch (\Exception $exception) {
             return $this->errorResponse($exception->getMessage());
         }
     }

@@ -8,8 +8,8 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
-
+//use Illuminate\Support\Facades\Notification;
+use Illuminate\Notifications\Notification;
 class NotificationController extends Controller
 {
     use ApiResponse;
