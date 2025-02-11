@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\API\VehicleController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -37,11 +36,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('ride-request', [\App\Http\Controllers\API\RideController::class, 'store'])->name('ride-request');
 
     // Favourites
-    Route::prefix('favourites')->controller(\App\Http\Controllers\FavouritController::class)->group(function () {
+    Route::prefix('favourites')->controller(\App\Http\Controllers\API\FavouritController::class)->group(function () {
         Route::get('', 'index')->name('favourites');
         Route::post('', 'store')->name('favourite-store');
         Route::delete('{vehicle_id}', 'destroy')->name('favourite-destroy');
     });
 
+
+    // Offers
+    Route::prefix('offers')->controller(\App\Http\Controllers\API\OfferController::class)->group(function () {
+        Route::get('', 'index')->name('offers');
+        Route::post('collect', 'collectOffer')->name('collect-offer');
+    });
 
 });

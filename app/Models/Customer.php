@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Customer extends Model
 {
@@ -19,6 +20,10 @@ class Customer extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'customer_id'); // Assuming 'customer_id' is the foreign key in the customers table
+    }
+
+    public function offers() :BelongsToMany {
+        return $this->belongsToMany(Offer::class, 'customer_offer', 'customer_id', 'offer_id');
     }
 
 
