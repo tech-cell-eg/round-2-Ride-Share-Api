@@ -13,6 +13,7 @@ use App\Notifications\PaymentSuccessful;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class RideController extends Controller
 {
@@ -42,7 +43,8 @@ class RideController extends Controller
             $note->store(User::findOrFail($vehicle->driver_id), new \App\Notifications\RideRequest($rideData));
             return $this->successResponse((new RideResource($ride))->toArray(request()), 'Ride created successfully.');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), 500);
+            Log::error('Error store ride: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 

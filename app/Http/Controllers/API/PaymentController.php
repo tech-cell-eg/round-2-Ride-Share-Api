@@ -10,6 +10,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
@@ -38,7 +39,9 @@ class PaymentController extends Controller
             ]);
             return $this->successResponse($response->json());
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error build request: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
+
         }
     }
 
@@ -90,10 +93,12 @@ class PaymentController extends Controller
                 return redirect()->route('payment.success');
             }
             return redirect()->route('payment.failed');
-            } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+
+        }catch (\Exception $exception) {
+            Log::error('Error callback payment: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
-    }
+}
 
     public function successPayment() {
         $title = "Payment Success";

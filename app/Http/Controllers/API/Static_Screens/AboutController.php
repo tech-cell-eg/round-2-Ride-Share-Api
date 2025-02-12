@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AboutPage;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AboutController extends Controller
 {
@@ -18,10 +19,16 @@ class AboutController extends Controller
     public function __invoke()
     {
         try {
-            $content = AboutPage::all()->first()->toArray();
-            return $this->successResponse($content);
+            $aboutPage = AboutPage::first();
+
+            if (!$aboutPage) {
+                return $this->errorResponse('About page content not found.', 404);
+            }
+            return $this->successResponse($aboutPage->toArray());
+
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error about page: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 }

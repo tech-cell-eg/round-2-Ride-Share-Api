@@ -54,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::match(['GET', 'POST'], '/payment/callback', [\App\Http\Controllers\API\PaymentController::class, 'callBack']);
 
 // location
-Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
+Route::post('get-location', \App\Http\Controllers\API\CurrentLocationController::class);
 
 // static screens
 Route::get('about', \App\Http\Controllers\API\Static_Screens\AboutController::class);

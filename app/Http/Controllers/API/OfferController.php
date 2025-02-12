@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Offer;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 
 class OfferController extends Controller
@@ -19,7 +20,8 @@ class OfferController extends Controller
             $offers = Offer::where('is_available', true)->get();
             return $this->successResponse(OfferResource::collection($offers)->resolve(), 'Offers retrieved successfully.');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error list of offers: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -32,7 +34,9 @@ class OfferController extends Controller
             $offer->update(['is_available' => false]);
             return $this->successResponse([], 'Collected successfully.');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error collect offer: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
+
         }
     }
 
