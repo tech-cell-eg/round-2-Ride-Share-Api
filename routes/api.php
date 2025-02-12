@@ -50,3 +50,5 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 });
+
+Route::get('about', \App\Http\Controllers\API\Static_Screens\AboutController::class);
