@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeLanguageRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Customer;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Support\Facades\Log;
+
 class UserController extends Controller
 {
 
@@ -59,4 +62,20 @@ class UserController extends Controller
             'message' => 'Logged out successfully'
         ], 200);
     }
+
+    public function changeLanguage(ChangeLanguageRequest $request){
+        try {
+            $data = $request->validated();
+            $user = auth()->user();
+            $user->language = $data['language'];
+            $user->save();
+            return $this->successResponse([
+                'language' => $data['language']
+            ], 'Language changed successfully!');
+        } catch (\Exception $exception) {
+            Log::error("Error in Change language" . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
+        }
+    }
+
 }
