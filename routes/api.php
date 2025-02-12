@@ -48,6 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Payment
     Route::post('/payment/process', [\App\Http\Controllers\API\PaymentController::class, 'sendPayment']);
+
+    // Rate
+    Route::post('rate', [\App\Http\Controllers\API\RateController::class, 'store'])->name('rate');
+
 });
 
 // Payment
