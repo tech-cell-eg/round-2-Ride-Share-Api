@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CurrentLocationRequest;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Stevebauman\Location\Facades\Location;
 
 class CurrentLocationController extends Controller
@@ -25,7 +25,8 @@ class CurrentLocationController extends Controller
             }
             return $this->successResponse($location);
         } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 500);
+            Log::error('Error Enable Location: ' . $e->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 }

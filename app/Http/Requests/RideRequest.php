@@ -27,6 +27,7 @@ class RideRequest extends FormRequest
             'drop_location' => 'required|string',
             'fare_price' => 'required|numeric',
             'distance' => 'required|numeric',
+            'start_date' => 'required|date_format:Y-m-d H:i:s',
         ];
     }
 }

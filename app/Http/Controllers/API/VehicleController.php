@@ -8,6 +8,7 @@ use App\Models\Transport;
 use App\Models\Vehicle;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VehicleController extends Controller
 {
@@ -24,16 +25,21 @@ class VehicleController extends Controller
                 ->where('is_available', true)->get();
             return $this->successResponse(CarResource::collection($cars)->toArray(request()), 'cars available');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), 500);
+            Log::error('Error Get Available Cars: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
-    public function ShowCar(Vehicle $vehicle) {
+    public function ShowCar($id) {
         try {
-            Transport::findOrFail($vehicle->transport_id);
-            return $this->successResponse((new CarResource($vehicle))->toArray(request()), 'Car found');
+            $car = Vehicle::where('id', $id)->first();
+            if (!$car) {
+                return $this->errorResponse('Car not found', 404);
+            }
+            return $this->successResponse((new CarResource($car))->toArray(request()), 'Car found');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), 500);
+            Log::error('Error get car details: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 

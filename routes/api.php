@@ -25,12 +25,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Location
-    Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
+    Route::post('get-location', \App\Http\Controllers\API\CurrentLocationController::class);
 
     // Transports
     Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
     Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
-    Route::get('/car/{vehicle}', [VehicleController::class, 'showCar'])->name('car');
+    Route::get('/car/{id}', [VehicleController::class, 'showCar'])->name('car');
 
     //Rent request
     Route::post('ride-request', [\App\Http\Controllers\API\RideController::class, 'store'])->name('ride-request');

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->float('fare_price');
             $table->float('distance');
             $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->dateTime('end_date')->nullable();
             $table->enum('ride_status', ['requested', 'ongoing', 'completed', 'cancelled'])->default('requested');
             $table->timestamps();
         });

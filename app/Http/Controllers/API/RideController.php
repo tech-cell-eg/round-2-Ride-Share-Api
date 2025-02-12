@@ -25,9 +25,13 @@ class RideController extends Controller
             $vehicle = Vehicle::findOrFail($dataValidated['vehicle_id']);
             $dataValidated['customer_id'] = Auth::id();
             $dataValidated['driver_id'] = $vehicle->driver_id;
+            $ride = Ride::where('vehicle_id', $vehicle->id)
+                ->where('customer_id', Auth::id())->first();
+            if ($ride) {
+                return $this->errorResponse('Ride already exists');
+            }
             $dataValidated['status'] = 'requested';
             $ride = Ride::create($dataValidated);
-            // send notifications for driver
             $rideData = [];
             $rideData['customer_name'] = Auth::user()->name;
             $rideData['pickup_location'] = $dataValidated['pickup_location'];

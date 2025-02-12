@@ -7,6 +7,7 @@ use App\Http\Resources\TransportResource;
 use App\Models\Transport;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TransportController extends Controller
 {
@@ -17,7 +18,8 @@ class TransportController extends Controller
             $transports = TransportResource::collection(Transport::all())->toArray(request());
             return $this->successResponse($transports, 'Transports retrieved successfully.');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), $exception->getCode());
+            Log::error('Error List Of Transports: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
