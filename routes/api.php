@@ -9,6 +9,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::put('profile/update' , [UserController::class ,'update']);
     Route::post('logout', [UserController::class, 'logout']);
+    Route::post('delete-account' ,  [UserController::class , 'deleteAccount']);
 });
 
 Route::post('login', [AuthController::class, 'login']);
+
