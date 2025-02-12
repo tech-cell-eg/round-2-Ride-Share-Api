@@ -22,6 +22,8 @@ return new class extends Migration
             $table->enum('roles', ['admin', 'customer', 'driver']);
             $table->string('mobile_number')->nullable();
             $table->rememberToken();
+            $table->string('code')->nullable();
+            $table->dateTime('expire_at')->nullable();
             $table->timestamps();
         });
 

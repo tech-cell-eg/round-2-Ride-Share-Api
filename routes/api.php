@@ -1,12 +1,21 @@
 <?php
 
 use App\Http\Controllers\API\VehicleController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
+// Route::get('/test-email', function () {
+//     Mail::raw('This is a test email', function ($message) {
+//         $message->to('sara666.s47@gmail.com')
+//                 ->subject('Test Email');
+//     });
 
+//     return 'Email sent!';
+// });
 // Auth
-Route::post('register', [\App\Http\Controllers\API\AuthController::class, 'register'])->name('register');
-Route::post('login', [\App\Http\Controllers\API\AuthController::class, 'login'])->name('login');
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth

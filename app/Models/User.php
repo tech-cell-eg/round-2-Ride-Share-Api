@@ -26,7 +26,10 @@ class User extends Authenticatable
         'gender',
         'mobile_number',
         'password',
-        'fcm_token'
+        'fcm_token',
+        'code',
+        'expire_at'
+
     ];
 
     /**
@@ -58,6 +61,7 @@ class User extends Authenticatable
     }
 
 
+
     public function customers(): HasMany {
         return $this->hasMany(Customer::class, 'customer_id');
     }
@@ -69,5 +73,6 @@ class User extends Authenticatable
     public function admins(): HasMany {
         return $this->hasMany(Admin::class, 'user_id');
     }
+
 
 }
