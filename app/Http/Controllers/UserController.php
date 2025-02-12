@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactUsRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Mail\ContactFormMail;
 use App\Models\Customer;
 use App\Models\Admin;
 use App\Models\Driver;
@@ -10,6 +12,8 @@ use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
+use Log;
+use Mail;
 class UserController extends Controller
 {
 
@@ -103,6 +107,22 @@ class UserController extends Controller
         } else {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+    }
+
+    public function contactUs(ContactUsRequest $request){
+
+        $email = new ContactFormMail(
+            $request->name, 
+            $request->email, 
+            $request->phone, 
+            $request->message
+        );
+    
+        // dd($email);
+    
+        Mail::to('sara666.s47@gmail.com')->send($email);
+
+        return response()->json(['message' => 'Your message has been sent successfully'], 200);
     }
 
 }
