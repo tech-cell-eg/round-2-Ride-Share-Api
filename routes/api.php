@@ -24,9 +24,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('delete/{id}', 'delete')->name('delete');
     });
 
-    // Location
-    Route::post('get-location', \App\Http\Controllers\API\CurrentLocationController::class);
-
     // Transports
     Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
     Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
@@ -49,6 +46,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('collect', 'collectOffer')->name('collect-offer');
     });
 
+    // Payment
+    Route::post('/payment/process', [\App\Http\Controllers\API\PaymentController::class, 'sendPayment']);
 });
 
+// Payment
+Route::match(['GET', 'POST'], '/payment/callback', [\App\Http\Controllers\API\PaymentController::class, 'callBack']);
+
+// location
+Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
+
+// static screens
 Route::get('about', \App\Http\Controllers\API\Static_Screens\AboutController::class);
+
+
+
