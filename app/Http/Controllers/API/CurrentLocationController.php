@@ -23,7 +23,7 @@ class CurrentLocationController extends Controller
             if (!$location || $location->isEmpty()) {
                 return $this->errorResponse('Location not found for the provided IP', 404);
             }
-            return $this->successResponse($location);
+            return $this->successResponse($location->toArray());
         } catch (\Exception $e) {
             Log::error('Error Enable Location: ' . $e->getMessage());
             return $this->errorResponse('Something went wrong. Please try again later.');
