@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female']);
             $table->enum('roles', ['admin', 'customer', 'driver']);
             $table->string('mobile_number')->nullable();
+            $table->string('language')->default('en');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -26,7 +26,8 @@ class User extends Authenticatable
         'gender',
         'mobile_number',
         'password',
-        'fcm_token'
+        'fcm_token',
+        'language',
     ];
 
     /**

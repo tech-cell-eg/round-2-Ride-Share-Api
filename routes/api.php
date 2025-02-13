@@ -52,6 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rate
     Route::post('rate', [\App\Http\Controllers\API\RateController::class, 'store'])->name('rate');
 
+    // Settings
+    Route::get('settings', [\App\Http\Controllers\API\SettingController::class, 'index'])->name('settings');
+    Route::post('change-language', [\App\Http\Controllers\UserController::class, 'changeLanguage'])->name('change-language');
+
 });
 
 // Payment
