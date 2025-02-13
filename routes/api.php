@@ -63,6 +63,6 @@ Route::post('get-location', \App\Http\Controllers\API\CurrentLocationController:
 // static screens
 Route::get('about', \App\Http\Controllers\API\Static_Screens\AboutController::class);
 Route::get('help&support', \App\Http\Controllers\API\Static_Screens\HelpAndSupportController::class);
-
+Route::get('privacy&policy', \App\Http\Controllers\API\Static_Screens\PrivacyAndPolicyController::class);
 
 
