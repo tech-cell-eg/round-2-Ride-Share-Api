@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Route;
 // Auth
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('send-reset-link', [AuthController::class, 'sendResetLinkEmail'])->name('password.reset');
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth

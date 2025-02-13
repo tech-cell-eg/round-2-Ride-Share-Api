@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Mail\ResetPasswordMail;
 use App\Models\Driver;
 use App\Models\User;
 use App\Traits\ApiResponse;
@@ -11,6 +12,8 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mail;
+use Password;
+use Validator;
 
 class AuthController extends Controller
 {
@@ -112,8 +115,55 @@ class AuthController extends Controller
 
     }
 
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+    
+        $user = User::where('email', $request->email)->first();
+    
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    
+        
+        $token = app('auth.password.broker')->createToken($user);
+    
+        Mail::to($request->email)->send(new ResetPasswordMail($token));
+    
+        return response()->json(['message' => 'Password reset token sent to your email!']);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'token' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => 'Password successfully changed']);
+        }
+
+        return response()->json(['error' => 'The vrification code is incorrect or expired'], 400);
+    }
+
     public function verifyPhoneOtp(Request $request)
-{
+    {
     $request->validate([
         'mobile_number' => 'required',
         'phone_otp' => 'required',
