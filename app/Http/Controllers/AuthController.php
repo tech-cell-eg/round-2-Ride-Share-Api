@@ -49,14 +49,6 @@ class AuthController extends Controller
 
         $otp = rand(100000, 999999);
 
-        $existingUser = User::where('email', $request->email)->first();
-        if ($existingUser) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email is already taken.'
-            ], 400); 
-        }
-
         try {
             $user = User::create([
                 'name' => $request->name,
@@ -66,6 +58,7 @@ class AuthController extends Controller
                 'gender' => $request->gender,
                 'code' => $otp,
                 'expire_at' => Carbon::now()->addMinutes(15),
+                'phone_otp' => '12345',
             ]);
 
             switch ($request->roles) {
@@ -119,8 +112,32 @@ class AuthController extends Controller
 
     }
 
+    public function verifyPhoneOtp(Request $request)
+{
+    $request->validate([
+        'mobile_number' => 'required',
+        'phone_otp' => 'required',
+    ]);
 
-    public function verifyOtp(Request $request)
+    $user = User::where('mobile_number', $request->mobile_number)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+
+    if ($user->phone_otp === $request->phone_otp) {
+        $user->update(['phone_otp' => null]); 
+
+        return response()->json(['message' => 'Phone verified successfully']);
+    } else {
+        return response()->json(['message' => 'Invalid OTP'], 400);
+    }
+}
+
+
+
+    public function verifyEmail(Request $request)
     {
         $request->validate([
             'email' => 'required|email',

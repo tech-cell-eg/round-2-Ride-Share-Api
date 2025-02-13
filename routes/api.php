@@ -4,25 +4,19 @@ use App\Http\Controllers\API\VehicleController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/test-email', function () {
-//     Mail::raw('This is a test email', function ($message) {
-//         $message->to('sara666.s47@gmail.com')
-//                 ->subject('Test Email');
-//     });
 
-//     return 'Email sent!';
-// });
 // Auth
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
-    Route::post('logout', [\App\Http\Controllers\UserController::class, 'logout'])->name('logout');
+        Route::post('logout', [\App\Http\Controllers\UserController::class, 'logout'])->name('logout');
+        Route::post('/verify-phone', [AuthController::class, 'verifyPhoneOtp']);
 
     // Notification
-    Route::prefix('notifications')->controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
+        Route::prefix('notifications')->controller(\App\Http\Controllers\API\NotificationController::class)->group(function () {
         Route::post('token', 'update')->name('notification-token');
         Route::get('', 'index')->name('notifications');
         Route::get('unread', 'unreadNotifications')->name('unread-notifications');
@@ -34,18 +28,18 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Location
-    Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
+        Route::post('/get-location', \App\Http\Controllers\API\CurrentLocationController::class);
 
     // Transports
-    Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
-    Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
-    Route::get('/car/{vehicle}', [VehicleController::class, 'showCar'])->name('car');
+        Route::get('transports', [\App\Http\Controllers\API\TransportController::class, 'index'])->name('transports');
+        Route::get('available-cars', [VehicleController::class, 'availableCars'])->name('available-cars');
+        Route::get('/car/{vehicle}', [VehicleController::class, 'showCar'])->name('car');
 
     //Rent request
-    Route::post('ride-request', [\App\Http\Controllers\API\RideController::class, 'store'])->name('ride-request');
+        Route::post('ride-request', [\App\Http\Controllers\API\RideController::class, 'store'])->name('ride-request');
 
     // Favourites
-    Route::prefix('favourites')->controller(\App\Http\Controllers\API\FavouritController::class)->group(function () {
+        Route::prefix('favourites')->controller(\App\Http\Controllers\API\FavouritController::class)->group(function () {
         Route::get('', 'index')->name('favourites');
         Route::post('', 'store')->name('favourite-store');
         Route::delete('{vehicle_id}', 'destroy')->name('favourite-destroy');
@@ -53,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Offers
-    Route::prefix('offers')->controller(\App\Http\Controllers\API\OfferController::class)->group(function () {
+        Route::prefix('offers')->controller(\App\Http\Controllers\API\OfferController::class)->group(function () {
         Route::get('', 'index')->name('offers');
         Route::post('collect', 'collectOffer')->name('collect-offer');
     });
