@@ -22,29 +22,44 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-
-
-
         $user = User::where('email', $request->email)->first();
-        $customer = $user->customer;
-
+    
         if (!$user || !Auth::attempt($request->only('email', 'password'))) {
             return $this->errorResponse('Unauthorized', 401);
         }
-
-        // Generate Sanctum token
+    
+        
         $token = $user->createToken('API Token')->plainTextToken;
-
-        return $this->successResponse([
+    
+        
+        $data = [
             'token' => $token,
             'name' => $user->name,
             'email' => $user->email,
-            'mobile_number' => $user->mobile_number,
-            'city' => $customer->city,
-            'district' => $customer->district,
-            'street' => $customer->street,
-        ], 'Login successful');
+        ];
+    
+        
+        if ($user->hasRole('admin')) {
+            
+            $data['role'] = 'admin';
+            $data['admin_data'] = $user->admin; 
+        } elseif ($user->hasRole('customer')) {
+
+            $data['role'] = 'customer';
+            $customer = $user->customer; 
+            $data['city'] = $customer->city;
+            $data['district'] = $customer->district;
+            $data['street'] = $customer->street;
+        } elseif ($user->hasRole('driver')) {
+          
+            $data['role'] = 'driver';
+            $driver = $user->driver; 
+            $data['driver_data'] = $driver; 
+        }
+    
+        return $this->successResponse($data, 'Login successful');
     }
+    
 
     public function register(RegisterRequest $request)
     {
