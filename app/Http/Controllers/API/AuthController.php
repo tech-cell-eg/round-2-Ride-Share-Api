@@ -41,6 +41,6 @@ class AuthController extends \App\Http\Controllers\Controller
 
             return $this->successResponse($data, 'User Loged in successfully', Response::HTTP_CREATED);
         }
-        return $this->errorResponse([], 'these credentials do not match our records.', Response::HTTP_UNAUTHORIZED);
+        return $this->errorResponse('these credentials do not match our records.' , Response::HTTP_UNAUTHORIZED);
     }
 }

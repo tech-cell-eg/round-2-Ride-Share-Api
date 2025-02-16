@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('mobile_number')->nullable();
             $table->string('language')->default('en');
             $table->rememberToken();
+            $table->string('code')->nullable();
+            $table->dateTime('expire_at')->nullable();
             $table->timestamps();
         });
 
