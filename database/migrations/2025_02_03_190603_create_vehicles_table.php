@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('vihecles', function (Blueprint $table) {
+        Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('driver_id')->constrained('drivers', 'driver_id')->onDelete('cascade');
             $table->foreignId('transport_id')->constrained('transports')->onDelete('cascade');
@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->float('model');
             $table->integer('manifactur_year');
             $table->string('manifactur_company');
+            $table->boolean('is_available')->default(true);
             $table->timestamps();
         });
     }

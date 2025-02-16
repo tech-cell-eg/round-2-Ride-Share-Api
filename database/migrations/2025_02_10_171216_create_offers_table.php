@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('type');
-            $table->morphs('notifiable');
-            $table->text('data');
-            $table->timestamp('read_at')->nullable();
+        Schema::create('offers', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('admin_id')->nullable()->constrained('admins')->references('admin_id')->onDelete('set null');
+            $table->string('title');
+            $table->text('description');
+            $table->boolean('is_available');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('offers');
     }
 };

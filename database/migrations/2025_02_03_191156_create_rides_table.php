@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('driver_id')->constrained('drivers')->references('driver_id')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('customers')->references('customer_id')->onDelete('cascade');
+            $table->foreignId('vehicle_id')->constrained('vehicles')->references('id')->nullable();
             $table->string('pickup_location');
             $table->string('drop_location');
             $table->float('fare_price');
             $table->float('distance');
             $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->dateTime('end_date')->nullable();
             $table->enum('ride_status', ['requested', 'ongoing', 'completed', 'cancelled'])->default('requested');
             $table->timestamps();
         });
