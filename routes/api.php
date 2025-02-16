@@ -9,6 +9,13 @@ Route::post('register', [\App\Http\Controllers\API\AuthController::class, 'regis
 Route::post('login', [\App\Http\Controllers\API\AuthController::class, 'login'])->name('login');
 
 Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::put('profile/update' , [UserController::class ,'update']);
+    Route::post('logout', [UserController::class, 'logout']);
+    Route::post('delete-account' ,  [UserController::class , 'deleteAccount']);
+});
+
+Route::post('login', [AuthController::class, 'login']);
     // Auth
     Route::post('logout', [\App\Http\Controllers\UserController::class, 'logout'])->name('logout');
 
