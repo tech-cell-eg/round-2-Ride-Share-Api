@@ -29,7 +29,7 @@ class User extends Authenticatable
         'fcm_token',
         'code',
         'expire_at'
-
+        'language',
     ];
 
     /**

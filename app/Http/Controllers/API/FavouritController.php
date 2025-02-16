@@ -7,6 +7,7 @@ use App\Http\Requests\FavouritRequest;
 use App\Models\Favourit;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class FavouritController extends Controller
 {
@@ -18,7 +19,8 @@ class FavouritController extends Controller
             $favourites = Auth::user()->favourites()->get()->toArray();
             return $this->successResponse($favourites);
         } catch (\Exception $exception){
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error get list of favourites: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -29,7 +31,8 @@ class FavouritController extends Controller
             Favourit::create($data);
             return $this->successResponse([], 'Added to favourit');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error to add favourite: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -39,7 +42,8 @@ class FavouritController extends Controller
             $favourit->delete();
             return $this->successResponse([], 'Removed from favourit');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error delete vehicle: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 

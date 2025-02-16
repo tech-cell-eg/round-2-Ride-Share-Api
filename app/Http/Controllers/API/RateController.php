@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\RateRequest;
 use App\Models\Rate;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RateController extends Controller
 {
@@ -18,7 +19,8 @@ class RateController extends Controller
             Rate::create($data);
             return $this->successResponse([], 'Rate added successfully');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error store rate: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 

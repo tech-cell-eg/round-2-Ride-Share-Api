@@ -13,6 +13,7 @@ use App\Notifications\PaymentSuccessful;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class RideController extends Controller
 {
@@ -25,9 +26,13 @@ class RideController extends Controller
             $vehicle = Vehicle::findOrFail($dataValidated['vehicle_id']);
             $dataValidated['customer_id'] = Auth::id();
             $dataValidated['driver_id'] = $vehicle->driver_id;
+            $ride = Ride::where('vehicle_id', $vehicle->id)
+                ->where('customer_id', Auth::id())->first();
+            if ($ride) {
+                return $this->errorResponse('Ride already exists');
+            }
             $dataValidated['status'] = 'requested';
             $ride = Ride::create($dataValidated);
-            // send notifications for driver
             $rideData = [];
             $rideData['customer_name'] = Auth::user()->name;
             $rideData['pickup_location'] = $dataValidated['pickup_location'];
@@ -38,7 +43,8 @@ class RideController extends Controller
             $note->store(User::findOrFail($vehicle->driver_id), new \App\Notifications\RideRequest($rideData));
             return $this->successResponse((new RideResource($ride))->toArray(request()), 'Ride created successfully.');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage(), 500);
+            Log::error('Error store ride: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 

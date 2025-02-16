@@ -18,6 +18,7 @@ class Ride extends Model
         'fare_price',
         'distance',
         'ride_status',
+        'start_date',
     ];
 
     public function customer(): BelongsTo {

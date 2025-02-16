@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class CurrentLocationRequest extends FormRequest
+class ContactUsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,10 @@ class CurrentLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ip' => 'required|ip'
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'phone' => 'required|string|min:10|max:20',
+            'message' => 'required|string|max:255'
         ];
     }
 
@@ -37,3 +40,4 @@ class CurrentLocationRequest extends FormRequest
         ], 422));
     }
 }
+

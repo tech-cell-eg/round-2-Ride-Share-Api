@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class NotificationController extends Controller
@@ -20,17 +21,19 @@ class NotificationController extends Controller
             $user->save();
             return $this->successResponse([], 'Token saved successfully');
         } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage());
+            Log::error('Error update fcm_token: ' . $e->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
-    public function store(User $user = null, $notificationInstance = null)
+    public function store(User $user = null, $notificationInstance = null) : bool
     {
         try {
             $user->notify($notificationInstance);
-            return $this->successResponse([], 'Notification send successfully');
-        } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage());
+            return false;
+        } catch (\Exception $e) {
+            Log::error('Error Store Notification: ' . $e->getMessage());
+            return true;
         }
     }
 
@@ -39,19 +42,23 @@ class NotificationController extends Controller
             Auth::user()->unreadNotifications->markAsRead();
             return $this->successResponse([], 'Notifications marked as read successfully');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error Mark All Notifications Read: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
     public function markAsRead(string $id) {
         try {
-            $notification = auth()->user()->unreadNotifications->find($id);
-            if ($notification) {
-                $notification->markAsRead();
+            $user = auth()->user();
+            $notification = $user->unreadNotifications()->where('id', $id)->first();
+            if (!$notification) {
+                return $this->errorResponse('Notification not found', 404);
             }
+            $notification->markAsRead();
             return $this->successResponse([], 'Notification marked as read successfully');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error Mark A Notification Read: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -60,20 +67,22 @@ class NotificationController extends Controller
             Auth::user()->readNotifications()->delete();
             return $this->successResponse([], 'Notifications deleted successfully');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error Delete All Notification: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
     public  function delete(string $id) {
         try {
-            $notification = Auth::user()->notifications()->find($id);
+            $notification = Auth::user()->notifications()->where('id', $id)->first();
             if (!$notification) {
                 return $this->errorResponse("Notification not found", 404);
             }
             $notification->delete();
             return $this->successResponse([], 'Notification deleted successfully');
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error Mark A Notification Read: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -82,9 +91,10 @@ class NotificationController extends Controller
             $notifications = Auth::user()->notifications()
                 ->orderBy('created_at', 'desc')
                 ->get();
-            return $this->successResponse(NotificationResource::collection($notifications));
+            return $this->successResponse(NotificationResource::collection($notifications)->toArray(request()));
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error fetching notifications: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -93,9 +103,10 @@ class NotificationController extends Controller
             $notifications = Auth::user()->unreadNotifications()
                 ->orderBy('created_at', 'desc')
                 ->get();
-            return $this->successResponse(NotificationResource::collection($notifications));
+            return $this->successResponse(NotificationResource::collection($notifications)->toArray(request()));
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error Return Unread Notifications: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 
@@ -104,9 +115,10 @@ class NotificationController extends Controller
             $notifications = Auth::user()->readNotifications()
                 ->orderBy('created_at', 'desc')
                 ->get();
-            return $this->successResponse(NotificationResource::collection($notifications));
+            return $this->successResponse(NotificationResource::collection($notifications)->toArray(request()));
         } catch (\Exception $exception) {
-            return $this->errorResponse($exception->getMessage());
+            Log::error('Error Retrun Read Notifications: ' . $exception->getMessage());
+            return $this->errorResponse('Something went wrong. Please try again later.');
         }
     }
 

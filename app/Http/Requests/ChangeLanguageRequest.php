@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\AvailabelLanguages;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
 
-class CurrentLocationRequest extends FormRequest
+class ChangeLanguageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +24,7 @@ class CurrentLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ip' => 'required|ip'
+            'language' => ['required', Rule::in(AvailabelLanguages::values())],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'message' => 'Validation errors',
-            'errors' => $validator->errors()
-        ], 422));
     }
 }
